@@ -1,0 +1,47 @@
+version: '3.3'
+
+networks:
+  stomp:
+    driver: overlay
+  bridge:
+    external: true
+
+configs:
+  enabled_plugins:
+    file: ./enabled_plugins
+
+services:
+  rab1:
+    image: rabbitmq
+    configs:
+      - source: enabled_plugins
+        target: /etc/rabbitmq/enabled_plugins
+    networks:
+      - stomp
+      - bridge
+    environment:
+      - RABBITMQ_ERLANG_COOKIE='SOFTNIXCLUSTER'
+    hostname: rab1
+  rab2:
+    image: rabbitmq
+    configs:
+      - source: enabled_plugins
+        target: /etc/rabbitmq/enabled_plugins
+    networks:      
+      - stomp
+      - bridge     
+    environment:                                 
+      - RABBITMQ_ERLANG_COOKIE='SOFTNIXCLUSTER'  
+    hostname: rab2
+  rab3:
+    image: rabbitmq
+    configs:
+      - source: enabled_plugins
+        target: /etc/rabbitmq/enabled_plugins
+    networks:
+      - stomp
+      - bridge
+    environment:
+      - RABBITMQ_ERLANG_COOKIE='SOFTNIXCLUSTER'
+    hostname: rab3
+
