@@ -24,6 +24,41 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  ng1:
+    image: krmonline/syslog-ng-kafka:latest
+    networks:
+      - stomp
+    ports:
+      - "514:514/udp"
+      - "514:514"
+    volumes:
+      - ./ng1/app1.conf:/etc/syslog-ng/conf.d/app1.conf
+  app1:
+    image: krmonline/phpstomp:1.1
+    networks:
+      - stomp
+    volumes:
+      - ./app1/html:/var/www/html
+  viz:
+    image: dockersamples/visualizer
+    networks:
+      - stomp
+    ports:
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    constraints:
+      - node.role==manager
+  www1:
+    image: nginx:latest
+    netowrks:
+      - stomp
+    ports:
+      8081:80
+    volumes:
+      - nginx_conf/default.conf:/etc/nginx/conf.d/default.conf
+    
+
 networks:
   stomp:
     external: true
